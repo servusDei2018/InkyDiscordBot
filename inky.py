@@ -28,6 +28,7 @@ def clannieInsert(inputDestinyDisplayName, inputDestinyMembershipID, inputBungie
 	# Finer point of the SQL syntax here, REPLACE vs INSERT. Since this gets run more than once, if a simple insert was used, exceptions would be raised since entries already exist with the PK
 	#  So by using replace, we overwrite the data, avoiding the exception. This has the aide effect of keeping the database up to date on username changes. 
 	#  One major shortcoming of the code that needs to be addressed, is that is someone leaves the clan, the database does not remove them from the clan roster.
+	#  TODO: That
 	cursor.execute('REPLACE INTO clannies (destinyDisplayName, destinyMembershipID, bungieDisplayName, bungieMembershipID) VALUES (%s, %s, %s, %s);', [inputDestinyDisplayName, inputDestinyMembershipID, inputBungieDisplayName, inputBungieMembershipID])
 	result = cursor.fetchall()
 
@@ -57,6 +58,7 @@ def clannieUpdate():
 			onlineClannies.append(clannie["destinyUserInfo"]["membershipId"])
 			print(f"{destinyDisplayName} is online")
 
+
 #Fetch Weapon Statistics from API.
 def apiRequestStats(val1, val2):
 	global headers
@@ -68,7 +70,7 @@ def apiRequestStats(val1, val2):
 		rawStatsJSON = r.json()
 		if rawStatsJSON["ErrorCode"] !=1:
 			rawStatsJSON = 0
-	
+	#TODO: Figure out if we can limit the scope of that call, cause it thicc
 	return rawStatsJSON
 
 #Fetch Fireteam members of given player.
@@ -192,6 +194,7 @@ async def mainloop():
 					#If any stat is above 85% notify sus.
 					for stat in nonClannieStatsList:
 						if stat >= "85%":
+							#TODO: More conditional logic to isolate the truly sus people. Point system?
 							result = getClannieDisplayNameFromID(clannie)
 							
 							embed = discord.Embed(title=member["displayName"], description=member["membershipId"], color=0xffff00)
@@ -230,6 +233,8 @@ async def blacklist(ctx, arg):
     channel = client.get_channel(614647064281743373)
     addToBlacklist(arg)
     await channel.send(arg)
+
+#TODO: Whitelist command.
 
 #start
 client.run('REDACTED', reconnect=True)
